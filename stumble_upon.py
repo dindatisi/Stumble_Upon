@@ -5,6 +5,7 @@ import nltk
 import string
 from nltk.corpus import stopwords
 from collections import Counter
+from nltk import ngrams
 
 # constant
 ignorechars = [',', '.','-','--', '&', ';', ':', '?','#','>','<','=','[',']',')','(', '|','com','html', '!']
