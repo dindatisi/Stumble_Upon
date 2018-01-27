@@ -39,7 +39,7 @@ def clean_text(text):
 def list_to_string(l):
 	pool = []
 
-	for text in filtered_url:
+	for text in l:
 		if text is not None:
 			words = ' '.join(text)
 			pool.append(words)
