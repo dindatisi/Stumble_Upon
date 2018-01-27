@@ -27,7 +27,7 @@ def clean_text(text):
 	filtered_text=[]
 	for t in text:
 		if t is not None:
-			tokens = get_tokens(text)
+			tokens = get_tokens(t)
 			filtered = [w for w in tokens if not w in stopwords.words('english')]
 			filtered = [w for w in filtered if not w in ignorechars]
 			filtered_text.append(filtered)
@@ -88,16 +88,19 @@ print('body, title, and url succesfully created\n')
 print('start cleaning text')
 # filter from stopwords & unwanted chars
 filtered_title = clean_text(title)
+print('title cleaned')
 filtered_body = clean_text(body)
+print('body cleaned')
 filtered_url = clean_text(url)
+print('url cleaned')
 print('start appending list item into sentences')
 # append list item in each row to be sentences
 title = list_to_string(filtered_title)
-print('title cleaned')
+
 body = list_to_string(filtered_body)
-print('body cleaned')
+
 url = list_to_string(filtered_url)
-print('url cleaned')
+
 print('start creating n-grams')
 title_grams=get_ngrams(title, 2)
 
