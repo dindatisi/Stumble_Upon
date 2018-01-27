@@ -59,7 +59,7 @@ def get_ngrams(sentence, n):
 			gramlist.append(None)
 	return (gramlist)
                 
-def append_column(column_name, lst):
+def append_column(lst):
 	se = pd.Series(lst)
 	return (se.values)
 
