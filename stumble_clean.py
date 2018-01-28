@@ -7,6 +7,7 @@ import math
 from nltk.corpus import stopwords
 
 
+
 # constant
 ignorechars = [',', '.','-','--', '&', ';', ':', '?','#','>','<','=','[',']',')','(', '|','com','html', '!']
 
@@ -45,7 +46,7 @@ def clean_text(text):
 	for t in text:
 		if t is not None:
 			tokens = get_tokens(t)
-			filtered = [w for w in tokens if not (w in stopwords.words('english') and w in ignorechars)]
+			filtered = [w for w in tokens if not (w in ignorechars or w in stopwords.words('english'))]
 			filtered_text.append(filtered)
 		else:
 			filtered_text.append(None)
@@ -89,3 +90,4 @@ print(df.head(n=5))
 save = input('save df? (Y/N)')
 if save == 'Y':
 	df.to_csv('test-with-boilertext.tsv', sep='\t')
+	
