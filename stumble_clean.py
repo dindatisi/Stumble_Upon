@@ -72,8 +72,8 @@ def append_column(lst):
 
 # -- -- - -- --- - - -- MAIN PROGRAM -- -- - -- --- - - -- #
 
-
-df = pd.read_csv("test-stumble_upon.tsv", sep="\t")
+path=input('file path = ')
+df = pd.read_csv(path, sep="\t")
 print('read success')
 
 boiler = json_to_list('boilerplate')
@@ -89,5 +89,6 @@ df['boiler_text']=se_boiler.values
 print(df.head(n=5))
 save = input('save df? (Y/N)')
 if save == 'Y':
-	df.to_csv('test-with-boilertext.tsv', sep='\t')
-	
+	filename=input('filename = ')
+	df.to_csv(filename, sep='\t')
+
