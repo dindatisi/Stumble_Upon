@@ -31,7 +31,8 @@ def split_set(df):
 
 
 # MAIN
-df = pd.read_csv("train-with-boilertext.tsv", sep="\t")
+path = input('filename: ')
+df=pd.read_csv(path, sep="\t")
 df.head()
 
 boiler_text=df['boiler_text']
@@ -57,9 +58,14 @@ merged_df=pd.merge(df, df_tf, how='inner', on='urlid',
          left_index=False)
 print('merge success')
 print('remove unnecessary columns')
-merged_df=merged_df.drop('boilerplate',1)
-merged_df=merged_df.drop('boiler_text',1)
-print(merged_df.columns)
+try:
+	merged_df=merged_df.drop('boilerplate',1)
+	merged_df=merged_df.drop('boiler_text',1)
+except:
+	pass
+	
+finally:
+	print(merged_df.columns)
 
 isSplit=input('do u want to split data? (Y/N)')
 if isSplit=='Y':
