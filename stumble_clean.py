@@ -5,13 +5,27 @@ import nltk
 import string
 import math
 from nltk.corpus import stopwords
-
+from nltk.stem import PorterStemmer
 
 
 # constant
 ignorechars = [',', '.','-','--', '&', ';', ':', '?','#','>','<','=','[',']',')','(', '|','com','html', '!']
 
 # functions
+def get_stemmed(words):
+	print('start stemming')
+	ps = PorterStemmer()
+	stemmed = []
+	for word in words:
+		if word is not None:
+			tokens = nltk.word_tokenize(str(word))
+			stems=[(ps.stem(t)) for t in tokens]
+			stemmed.append(stems)
+		else:
+			stemmed.append(None)	
+	print('stemming done')
+	return stemmed
+
 def get_tokens(rev):
 	lowers = str(rev).lower() 
 	#remove the punctuation using the character deletion step of translate
@@ -76,13 +90,15 @@ path=input('file path = ')
 df = pd.read_csv(path, sep="\t")
 print('read success')
 
-boiler = json_to_list('boilerplate')
-print('checking sample content: ')
-print(boiler[0], '\n')
-boilerplate=get_json_params(boiler)
+#boiler = json_to_list('boilerplate')
+#print('checking sample content: ')
+#print(boiler[0], '\n')
+#boilerplate=get_json_params(boiler)
+boiler_text=df['boiler_text']
+#filtered_text = clean_text(boilerplate)
+stemmed_text = get_stemmed(boiler_text)
+boiler_text = list_to_string(stemmed_text)
 
-filtered_text = clean_text(boilerplate)
-boiler_text = list_to_string(filtered_text)
 # append column to dataframe
 se_boiler=pd.Series(boiler_text)
 df['boiler_text']=se_boiler.values
