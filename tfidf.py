@@ -31,7 +31,7 @@ def split_set(df):
 
 
 # MAIN
-df = pd.read_csv("test-with-boilertext.tsv", sep="\t")
+df = pd.read_csv("train-with-boilertext.tsv", sep="\t")
 df.head()
 
 boiler_text=df['boiler_text']
@@ -57,7 +57,7 @@ merged_df=pd.merge(df, df_tf, how='inner', on='urlid',
          left_index=False)
 print('merge success')
 print('remove unnecessary columns')
-#merged_df=merged_df.drop('boilerplate',1)
+merged_df=merged_df.drop('boilerplate',1)
 merged_df=merged_df.drop('boiler_text',1)
 print(merged_df.columns)
 
@@ -69,17 +69,17 @@ if isSplit=='Y':
 	save = input('save df? (Y/N)')
 	if save == 'Y':
 		print('wait to save training set')
-		train_75.to_csv('train75_tfidf.tsv', sep='\t')
+		train.to_csv('train75_tfidf.tsv', sep='\t')
 		print('save successful')
 
 		print('wait to save testing set')
-		test_25.to_csv('train_test25_tfidf.tsv', sep='\t')
+		test.to_csv('train_test25_tfidf.tsv', sep='\t')
 		print('save successful')
 	else:
 		print('data notsaved')
 elif isSplit=='N':
 	print('wait to save data')
-	merged_df.to_csv('train_test_tfidf.tsv', sep='\t')
+	merged_df.to_csv('test_tfidf.tsv', sep='\t')
 	print('save successful')
 
 
