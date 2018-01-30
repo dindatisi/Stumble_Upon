@@ -3,12 +3,23 @@ from textblob import TextBlob
 import json
 import nltk
 import string
+import math
 from nltk.corpus import stopwords
 from collections import Counter
 from nltk import ngrams
 
 # constant
 ignorechars = [',', '.','-','--', '&', ';', ':', '?','#','>','<','=','[',']',')','(', '|','com','html', '!']
+word_list=['cooking', 'baking', 'top', 'food', 'look', 'day', '10', 'eat', 'try', 'serve', 'cool', 'little', 're',
+          'heat', '12', 'butter', 'video', 'read', 'help', 'call', 'week', 'love', 'add', 'sugar', 'minutes',
+          'start', 'run', 'love', 'eggs', 'flavor','cheese', 'own', '2011', '20', 'quick','brown', 'home',
+          'chocolate', 'mix', 'people', 'tablespoons', 'blog', 'completely', 'water', 'including', 'ingredients', 
+          'prepared', 'preheat', 'natural', 'friends', 'create', 'remove', 'inspired', 'recipes', 'ice', 'remove',
+          'test', 'salt', 'line', 'write', 'news', 'cup', 'dish', 'food', 'fashion', 'article', 'image', 'milk',
+          'light', 'store', 'slice','person','family','season','hand','create','pan', 'fun', 'hit', 'author', 
+           'teaspoon', 'months', 'heavy', 'game', 'kitchen', 'recently', 'alternative', 'paper','slice','bowl',
+          'cream', 'combine', 'vegetable', 'follow', 'roll', 'filling']
+
 
 def get_tokens(rev):
 	lowers = str(rev).lower() 
@@ -63,11 +74,32 @@ def append_column(lst):
 	se = pd.Series(lst)
 	return (se.values)
 
+def tf(word, blob):
+    if len(blob.words)==0:
+        return 0
+    else:
+        return blob.words.count(word) / len(blob.words)
+
+def n_containing(word, bloblist):
+    return sum(1 for blob in bloblist if word in blob.words)
+
+def idf(word, bloblist):
+    return math.log(len(bloblist) / (1 + n_containing(word, bloblist)))
+
+def tfidf(word, blob, bloblist):
+    return tf(word, blob) * idf(word, bloblist)
+
+def set_tfidf(word, bloblist):
+    scores=[]
+    for i, blob in enumerate(bloblist):
+        scores.append(tfidf(word, blob, bloblist))
+    se_word = pd.Series(scores)
+    df_notNull[word]=se_word.values
 
 # -- -- - -- --- - - -- MAIN PROGRAM -- -- - -- --- - - -- #
 
 
-df = pd.read_csv("train-stumble_upon.tsv", sep="\t")
+df = pd.read_csv("test-stumble_upon.tsv", sep="\t")
 print('read success')
 
 boiler = json_to_list('boilerplate')

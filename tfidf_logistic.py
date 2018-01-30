@@ -20,6 +20,7 @@ def load_data(f_train, f_test):
 	y = np.array(pd.read_table(f_train))[:, 26]
 	print(train_category.shape)
 	print(test_category.shape)
+
 	#combine all columns
 	x_category = np.concatenate((train_category,test_category))
 	print(x_category.shape)
@@ -66,17 +67,14 @@ def get_prediction(f_test, x_train, x_test, y):
 def main():
 	x_words, x_category,y,len_train = load_data(f_train,f_test)
 	x_tfidf = get_tfidf(x_words)
-	#print(x_tfidf.toarray().shape)
 
 	#append columns
 	print('appending columns')
 	print(x_category.dtype)
 	print(x_tfidf.dtype)
-	#x_all=np.concatenate((x_tfidf.toarray(),x_category.T), axis=1)
 	x_all=sp.sparse.hstack((x_tfidf, x_category.astype(int)), format='csr')
-	#x_all=np.append(x_tfidf.dense, x_category, 0)
 	print('column appended')
-	print(x_all.shape)
+
 	x_train, x_test = build_model(x_all, y,len_train)
 	isContinue = input('continue to testing (Y/N)?').upper()
 	if isContinue == 'Y':
