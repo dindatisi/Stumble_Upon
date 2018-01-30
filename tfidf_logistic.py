@@ -34,12 +34,10 @@ def get_tfidf(x_all):
 	return x_all
 
 def build_model(x_all, len_train):
-	log = lm.LogisticRegression(penalty='l2', dual=True, tol=0.0001, 
-		C=1, fit_intercept=True, intercept_scaling=1.0, 
-		class_weight=None, random_state=None)
+	log = lm.LogisticRegression(penalty='l2', dual=True, tol=0.0001, C=1, fit_intercept=True, intercept_scaling=1.0, class_weight=None, random_state=None)
 	# cross-validation
 	x_train = x_all[:len_train]
-  	x_test = x_all[len_train:]
+	x_test = x_all[len_train:]
 	train_score=np.mean(cross_validation.cross_val_score(log, x_train, y.astype(float), cv=20, scoring='roc_auc'))
 	print ("20 Fold CV Score: ",train_score)
 	return x_train,x_test
