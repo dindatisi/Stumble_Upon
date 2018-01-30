@@ -10,6 +10,7 @@ f_test = 'test_stemmed.tsv'
 
 
 def load_data(f_train, f_test):
+	print('\n loading file')
 	train_data = list(np.array(pd.read_table(f_train))[:,2])
 	train_url = list(np.array(pd.read_table(f_train))[:,0])
 	test_data = list(np.array(pd.read_table(f_test))[:,2])
@@ -20,7 +21,7 @@ def load_data(f_train, f_test):
 	x_all = train_data + train_url + test_data + test_url
 
 	len_train = len(train_data)
-
+	print('load successful')
 	return x_all,y, len_train
 
 def get_tfidf(x_all):
@@ -33,7 +34,7 @@ def get_tfidf(x_all):
 	print('checking first ten words: \n', tfv.get_feature_names()[:10])
 	return x_all
 
-def build_model(x_all, len_train):
+def build_model(x_all, y, len_train):
 	log = lm.LogisticRegression(penalty='l2', dual=True, tol=0.0001, C=1, fit_intercept=True, intercept_scaling=1.0, class_weight=None, random_state=None)
 	# cross-validation
 	x_train = x_all[:len_train]
@@ -53,7 +54,7 @@ def get_prediction(x_train, x_test, y):
 def main():
 	x_all,y,len_train = load_data(f_train,f_test)
 	x_tfidf = get_tfidf (x_all)
-	x_train, x_test, y = build_model(x_tfidf, len_train)
+	x_train, x_test, y = build_model(x_tfidf,y,len_train)
 	isContinue = input('continue to testing (Y/N)?').upper()
 	if isContinue == 'Y':
 		pred_df = get_prediction(x_train,x_test,y)
