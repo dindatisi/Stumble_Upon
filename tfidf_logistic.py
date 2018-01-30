@@ -5,34 +5,35 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import sklearn.linear_model as lm
 
 # files
-f_train = 'train_stemmed.tsv'
-f_test = 'test_stemmed.tsv'
+f_train = 'train-stumble_upon.tsv'
+f_test = 'test-stumble_upon.tsv'
 
 
 def load_data(f_train, f_test):
 	print('\n loading file')
-	train_data = list(np.array(pd.read_table(f_train))[:,2])
-	train_url = list(np.array(pd.read_table(f_train))[:,0])
-	test_data = list(np.array(pd.read_table(f_test))[:,2])
-	test_url = list(np.array(pd.read_table(f_test))[:,0])
+	train_boiler = list(np.array(pd.read_table(f_train))[:,2])
+	train_category = list(np.array(pd.read_table(f_train))[:,3])
+	test_boiler = list(np.array(pd.read_table(f_test))[:,2])
+	test_category = list(np.array(pd.read_table(f_test))[:,3])
 	y = np.array(pd.read_table(f_train))[:,-1]
 
 	#combine all columns
-	x_all = train_data + train_url + test_data + test_url
+	x_category= train_category + test_category
+	x_words = train_boiler + test_boiler
 
-	len_train = len(train_data)
+	len_train = len(train_boiler)
 	print('load successful')
-	return x_all,y, len_train
+	return x_words, x_category,y, len_train
 
-def get_tfidf(x_all):
+def get_tfidf(x):
 	tfv = TfidfVectorizer(min_df=3,  max_features=None, strip_accents='unicode',
 		analyzer='word',token_pattern=r'\w{1,}',ngram_range=(1, 2), use_idf=1,smooth_idf=1,sublinear_tf=1)
 	print ("fitting pipeline")
-	tfv.fit(x_all)
+	tfv.fit(x)
 	print ("transforming data")
-	x_all = tfv.transform(x_all)
+	x = tfv.transform(x)
 	print('checking first ten words: \n', tfv.get_feature_names()[:10])
-	return x_all
+	return x
 
 def build_model(x_all, y, len_train):
 	log = lm.LogisticRegression(penalty='l2', dual=True, tol=0.0001, C=1, fit_intercept=True, intercept_scaling=1.0, class_weight=None, random_state=None)
@@ -52,9 +53,12 @@ def get_prediction(x_train, x_test, y):
 	return pred_df
 
 def main():
-	x_all,y,len_train = load_data(f_train,f_test)
-	x_tfidf = get_tfidf (x_all)
-	x_train, x_test, y = build_model(x_tfidf,y,len_train)
+	x_words, x_category,y,len_train = load_data(f_train,f_test)
+	x_tfidf = get_tfidf (x_words)
+
+	#append columns
+	x_all = x_tfidf + x_words
+	x_train, x_test = build_model(x_all, y,len_train)
 	isContinue = input('continue to testing (Y/N)?').upper()
 	if isContinue == 'Y':
 		pred_df = get_prediction(x_train,x_test,y)
