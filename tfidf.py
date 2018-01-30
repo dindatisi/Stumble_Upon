@@ -43,7 +43,7 @@ print('list length= ', len(boiler_list))
 # Create the tf-idf feature matrix
 word_list, matrix=get_tfidf_matrix(boiler_list)
 tfidf_arr = matrix.toarray()
-np.round_(tfidf_arr, decimals=4)
+tfidf_arr = np.round_(tfidf_arr, decimals=4)
 print(tfidf_arr.shape)
 print('total words= ', len(word_list))
 
@@ -54,7 +54,7 @@ df_tf['urlid']=df['urlid']
 df_tf.head()
 
 print('start merging')
-merged_df=pd.merge(df, df_tf, how='inner', on='urlid',
+merged_df=pd.merge(df, df_tf, how='left', on='urlid',
          left_index=False)
 print('merge success')
 print('remove unnecessary columns')
@@ -63,7 +63,7 @@ try:
 	merged_df=merged_df.drop('boiler_text',1)
 except:
 	pass
-	
+
 finally:
 	print(merged_df.columns)
 
