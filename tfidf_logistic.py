@@ -55,9 +55,9 @@ def get_prediction(x_train, x_test, y):
 def main():
 	x_words, x_category,y,len_train = load_data(f_train,f_test)
 	x_tfidf = get_tfidf (x_words)
-
+	print(type(x_tfidf))
 	#append columns
-	x_all = x_tfidf + x_words
+	x_all = x_tfidf + x_category
 	x_train, x_test = build_model(x_all, y,len_train)
 	isContinue = input('continue to testing (Y/N)?').upper()
 	if isContinue == 'Y':
