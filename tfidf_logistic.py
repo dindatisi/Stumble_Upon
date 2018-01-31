@@ -2,38 +2,38 @@ import pandas as pd
 import numpy as np
 from sklearn import metrics,preprocessing,cross_validation
 from sklearn.feature_extraction.text import TfidfVectorizer
+from nltk.corpus import stopwords
 import sklearn.linear_model as lm
 import scipy as sp
 
 # files
-f_train = 'train-with-dummy.tsv'
-f_test = 'test-with-dummy.tsv'
+f_train = 'train_stem.tsv'
+f_test = 'test_stem.tsv'
 #f_dummy = 'dummies.tsv'
+
 
 def load_data(f_train, f_test):
 	print('\n loading file')
-	train_boiler = list(np.array(pd.read_table(f_train))[:,2])
-	train_category = np.array(pd.read_table(f_train))[:,27:]
-	test_boiler = list(np.array(pd.read_table(f_test))[:,2])
-	test_category = np.array(pd.read_table(f_test))[:,26:]
+	train_boiler = list(np.array(pd.read_table(f_train))[:,-1])
+	#train_category = np.array(pd.read_table(f_train))[:,27:]
+	test_boiler = list(np.array(pd.read_table(f_test))[:,-1])
+	#test_category = np.array(pd.read_table(f_test))[:,26:]
 	
 	y = np.array(pd.read_table(f_train))[:, 26]
-	print(train_category.shape)
-	print(test_category.shape)
+	#print(train_category.shape)
+	#print(test_category.shape)
 
 	#combine all columns
-	x_category = np.concatenate((train_category,test_category))
-	print(x_category.shape)
+	#x_category = np.concatenate((train_category,test_category))
+	#print(x_category.shape)
 	x_words = train_boiler + test_boiler
-	print('cat length: ', len(x_category))
+	#print('cat length: ', len(x_category))
 	print('words length: ', len(x_words))
 	len_train = len(train_boiler)
 	print('load successful')
-	return x_words, x_category,y, len_train
+	#return x_words, x_category,y, len_train
+	return x_words,y, len_train
 
-def get_categoryBinary(category):
-	enc = preprocessing.OneHotEncoder()
-	enc.fit
 
 def get_tfidf(x):
 	tfv = TfidfVectorizer(min_df=3,  max_features=None, strip_accents='unicode',
@@ -42,7 +42,7 @@ def get_tfidf(x):
 	tfv.fit(x)
 	print ("transforming data")
 	x = tfv.transform(x)
-	print('checking first ten words: \n', tfv.get_feature_names()[:10])
+	print('checking first ten words: \n', tfv.get_feature_names()[:500])
 	return x
 
 def build_model(x_all, y, len_train):
@@ -51,8 +51,8 @@ def build_model(x_all, y, len_train):
 	# cross-validation
 	x_train = x_all[:len_train]
 	x_test = x_all[len_train:]
-	train_score=np.mean(cross_validation.cross_val_score(log, x_train, y.astype(float), cv=20, scoring='roc_auc'))
-	print ("20 Fold CV Score: ",train_score)
+	train_score=np.mean(cross_validation.cross_val_score(log, x_train, y.astype(float), cv=10, scoring='roc_auc'))
+	print ("10-Fold cross-val Score: ",train_score)
 	return x_train,x_test
 
 def get_prediction(f_test, x_train, x_test, y):
@@ -65,15 +65,16 @@ def get_prediction(f_test, x_train, x_test, y):
 	return pred_df
 
 def main():
-	x_words, x_category,y,len_train = load_data(f_train,f_test)
-	x_tfidf = get_tfidf(x_words)
+	#x_words, x_category,y,len_train = load_data(f_train,f_test)
+	x_words,y,len_train = load_data(f_train,f_test)
+	x_all = get_tfidf(x_words)
 
 	#append columns
-	print('appending columns')
-	print(x_category.dtype)
-	print(x_tfidf.dtype)
-	x_all=sp.sparse.hstack((x_tfidf, x_category.astype(int)), format='csr')
-	print('column appended')
+	#print('appending columns')
+	#print(x_category.dtype)
+	#print(x_tfidf.dtype)
+	#x_all=sp.sparse.hstack((x_tfidf, x_category.astype(int)), format='csr')
+	#print('column appended')
 
 	x_train, x_test = build_model(x_all, y,len_train)
 	isContinue = input('continue to testing (Y/N)?').upper()
